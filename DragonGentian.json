@@ -1,0 +1,14 @@
+{
+  "id": "DragonGentian",
+  "name": "龙胆 (Dragon Gentian)",
+  "author": "oran",
+  "description": "为储君增加一张能力牌：龙胆——你可以把辉星当作能量，能量当作辉星来使用。",
+  "version": "v1.0.0",
+  "min_game_version": "0.107.0",
+  "has_pck": false,
+  "has_dll": true,
+  "dependencies": [
+    {"id": "BaseLib", "min_version": "3.3.0"}
+  ],
+  "affects_gameplay": true
+}
