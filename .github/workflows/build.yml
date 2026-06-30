@@ -1,0 +1,87 @@
+name: Build and Release
+
+on:
+  push:
+    branches: [master]
+    tags: ['v*']
+  pull_request:
+    branches: [master]
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # .NET 9 SDK is included in windows-latest (VS 2022)
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
+
+      - name: Cache NuGet packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
+          restore-keys: ${{ runner.os }}-nuget-
+
+      - name: Restore NuGet packages
+        run: dotnet restore
+
+      # Download Godot 4.5.1 mono for PCK export
+      - name: Download Godot
+        shell: bash
+        run: |
+          curl -L -o godot.zip "https://github.com/godotengine/godot-builds/releases/download/4.5.1-stable/Godot_v4.5.1-stable_mono_win64.zip"
+          unzip -q godot.zip
+          echo "GODOT=$PWD/Godot_v4.5.1-stable_mono_win64/Godot_v4.5.1-stable_mono_win64_console.exe" >> $GITHUB_ENV
+
+      - name: Import Godot assets
+        shell: bash
+        run: |
+          "$GODOT" --headless --path . --import
+
+      - name: Export PCK
+        shell: bash
+        run: |
+          "$GODOT" --headless --path . --export-pack "BasicExport" DragonGentian.pck
+
+      - name: Build DLL (best-effort)
+        id: build_dll
+        continue-on-error: true
+        run: dotnet build -c Release --no-restore
+
+      - name: Prepare release package
+        shell: bash
+        run: |
+          mkdir -p release/DragonGentian
+          # Copy PCK (always built)
+          cp DragonGentian.pck release/DragonGentian/ 2>/dev/null || echo "PCK not found"
+          # Copy manifest
+          cp DragonGentian.json release/DragonGentian/
+          # Copy DLL if built
+          cp bin/Release/net9.0/DragonGentian.dll release/DragonGentian/ 2>/dev/null || echo "DLL not found (may need game reference assemblies)"
+          # Copy README
+          cp README.md release/ 2>/dev/null || true
+          # Create zip
+          cd release
+          7z a -tzip ../DragonGentian.zip .
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: DragonGentian
+          path: DragonGentian.zip
+
+      # Create GitHub Release when a version tag is pushed
+      - name: Create Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: DragonGentian.zip
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

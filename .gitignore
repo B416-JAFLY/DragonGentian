@@ -32,3 +32,6 @@ _wiki_card_refs/
 
 # NuGet
 nuget.config
+
+# Keep screenshots
+!screenshots/

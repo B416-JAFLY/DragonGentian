@@ -13,6 +13,8 @@
 
 This mod was inspired by the Regent's dual-resource system and aims to provide more flexibility in deck-building and combat decision-making.
 
+![Preview](screenshots/preview.png)
+
 ---
 
 ### The Card
@@ -120,6 +122,8 @@ MIT
 ### 概述
 
 **龙胆 (Dragon Gentian)** 是一个为 **杀戮尖塔2** 设计的自定义卡牌模组，为 **储君 (Regent)** 角色添加了一张独特的 **能力牌**。打出后获得「辉星与能量 1:1 互通」的效果——任何一种资源都可以当作另一种来使用。
+
+![预览](screenshots/preview.png)
 
 ---
 
