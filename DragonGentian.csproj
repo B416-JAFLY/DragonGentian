@@ -1,5 +1,5 @@
-﻿<Project Sdk="Microsoft.NET.Sdk" InitialTargets="CheckDependencyPaths">
-    <Import Project=".\Sts2PathDiscovery.props"/>
+﻿<Project Sdk="Godot.NET.Sdk/4.5.1" InitialTargets="CheckDependencyPaths">
+    <Import Project=".\Sts2PathDiscovery.props" />
     <PropertyGroup>
         <TargetFramework>net9.0</TargetFramework>
         <ImplicitUsings>true</ImplicitUsings>
@@ -30,7 +30,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Alchyr.Sts2.BaseLib" Version="*" PrivateAssets="All"/>
+        <PackageReference Include="Alchyr.Sts2.BaseLib" Version="*" PrivateAssets="All" />
         <PackageReference Include="Alchyr.Sts2.ModAnalyzers" Version="*" />
         <PackageReference Include="Lib.Harmony" Version="2.3.3" />
         <AdditionalFiles Include="DragonGentian/localization/**/*.json" />
@@ -54,9 +54,7 @@
     </ItemGroup>
 
     <Target Name="CheckDependencyPaths">
-        <Error
-            Text="Slay the Spire 2 data not found at path '$(Sts2DataDir)'"
-            Condition="'$(Sts2DataDir)' == '' or !Exists('$(Sts2DataDir)')" />
+        <Error Text="Slay the Spire 2 data not found at path '$(Sts2DataDir)'" Condition="'$(SkipSts2PathCheck)' != 'true' and ('$(Sts2DataDir)' == '' or !Exists('$(Sts2DataDir)'))" />
     </Target>
 
     <Target Name="CopyToModsFolderOnBuild" AfterTargets="PostBuildEvent">

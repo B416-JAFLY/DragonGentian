@@ -29,7 +29,7 @@ jobs:
           restore-keys: ${{ runner.os }}-nuget-
 
       - name: Restore NuGet packages
-        run: dotnet restore
+        run: dotnet restore -p:SkipSts2PathCheck=true
 
       # Download Godot 4.5.1 mono for PCK export
       - name: Download Godot
@@ -52,7 +52,7 @@ jobs:
       - name: Build DLL (best-effort)
         id: build_dll
         continue-on-error: true
-        run: dotnet build -c Release --no-restore
+        run: dotnet build -c Release --no-restore -p:SkipSts2PathCheck=true
 
       - name: Prepare release package
         shell: bash
